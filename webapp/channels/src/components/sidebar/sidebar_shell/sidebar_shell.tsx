@@ -1,0 +1,121 @@
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+import classNames from 'classnames';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useHistory, useLocation} from 'react-router-dom';
+
+import {getCurrentRelativeTeamUrl} from 'mattermost-redux/selectors/entities/teams';
+
+import {selectLhsItem, switchToLhsStaticPage} from 'actions/views/lhs';
+
+import SidebarDocumentsMenu from 'components/sidebar/sidebar_documents_menu/sidebar_documents_menu';
+import SidebarPrimaryNav from 'components/sidebar/sidebar_primary_nav/sidebar_primary_nav';
+import {
+    SIDEBAR_PRIMARY_TAB_STORAGE_KEY,
+    SidebarPrimaryTab,
+} from 'components/sidebar/sidebar_primary_nav/types';
+
+import {LhsItemType, LhsPage} from 'types/store/lhs';
+
+import './sidebar_shell.scss';
+
+const LAST_MESSAGES_PATH_STORAGE_KEY = 'mattermost_sidebar_last_messages_path';
+
+type Props = {
+    messagesContent: React.ReactNode;
+};
+
+function isDocumentsPath(pathname: string, teamUrl: string): boolean {
+    return pathname === `${teamUrl}/documents` || pathname.startsWith(`${teamUrl}/documents/`);
+}
+
+function SidebarShell({messagesContent}: Props) {
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const location = useLocation();
+    const teamUrl = useSelector(getCurrentRelativeTeamUrl);
+    const [activeTab, setActiveTab] = useState(SidebarPrimaryTab.Messages);
+
+    useEffect(() => {
+        if (isDocumentsPath(location.pathname, teamUrl)) {
+            setActiveTab(SidebarPrimaryTab.Documents);
+            return;
+        }
+        setActiveTab(SidebarPrimaryTab.Messages);
+    }, [location.pathname, teamUrl]);
+
+    const handleTabChange = useCallback((tab: SidebarPrimaryTab) => {
+        if (tab === activeTab) {
+            return;
+        }
+
+        setActiveTab(tab);
+
+        try {
+            localStorage.setItem(SIDEBAR_PRIMARY_TAB_STORAGE_KEY, tab);
+        } catch {
+            // Ignore storage errors.
+        }
+
+        if (tab === SidebarPrimaryTab.Documents) {
+            if (!isDocumentsPath(location.pathname, teamUrl)) {
+                try {
+                    sessionStorage.setItem(LAST_MESSAGES_PATH_STORAGE_KEY, location.pathname);
+                } catch {
+                    // Ignore storage errors.
+                }
+            }
+            dispatch(switchToLhsStaticPage(LhsPage.Documents));
+            return;
+        }
+
+        let returnPath: string | null = null;
+        try {
+            returnPath = sessionStorage.getItem(LAST_MESSAGES_PATH_STORAGE_KEY);
+        } catch {
+            // Ignore storage errors.
+        }
+
+        const targetPath = returnPath && !isDocumentsPath(returnPath, teamUrl) ?
+            returnPath :
+            `${teamUrl}/channels/town-square`;
+
+        dispatch(selectLhsItem(LhsItemType.None));
+        history.push(targetPath);
+    }, [activeTab, dispatch, history, location.pathname, teamUrl]);
+
+    return (
+        <div className='SidebarShell'>
+            <SidebarPrimaryNav
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+            />
+            <div className='SidebarShell__panels'>
+                <div
+                    id={`sidebar_primary_panel_${SidebarPrimaryTab.Messages}`}
+                    role='tabpanel'
+                    aria-labelledby={`sidebar_primary_nav_tab_${SidebarPrimaryTab.Messages}`}
+                    className={classNames('SidebarShell__panel', {
+                        'SidebarShell__panel--active': activeTab === SidebarPrimaryTab.Messages,
+                    })}
+                >
+                    {messagesContent}
+                </div>
+                <div
+                    id={`sidebar_primary_panel_${SidebarPrimaryTab.Documents}`}
+                    role='tabpanel'
+                    aria-labelledby={`sidebar_primary_nav_tab_${SidebarPrimaryTab.Documents}`}
+                    className={classNames('SidebarShell__panel', {
+                        'SidebarShell__panel--active': activeTab === SidebarPrimaryTab.Documents,
+                    })}
+                >
+                    <SidebarDocumentsMenu/>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default React.memo(SidebarShell);

@@ -1,0 +1,27 @@
+.Documents {
+    display: flex;
+    overflow: auto;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    &__inner {
+        max-width: 480px;
+        padding: 24px;
+        color: rgba(var(--center-channel-color-rgb), 0.72);
+        text-align: center;
+    }
+
+    &__title {
+        margin: 0 0 12px;
+        color: var(--center-channel-color);
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    &__description {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+}

@@ -1,0 +1,89 @@
+.SidebarPrimaryNav {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 12px 6px;
+    gap: 8px;
+    background-color: rgba(var(--sidebar-header-bg-rgb), 0.35);
+    border-right: 1px solid rgba(var(--sidebar-text-rgb), 0.08);
+
+    &__tab {
+        display: flex;
+        width: 52px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 4px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: rgba(var(--sidebar-text-rgb), 0.72);
+        cursor: pointer;
+        gap: 4px;
+        transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+
+        &:hover {
+            background-color: rgba(var(--sidebar-text-rgb), 0.08);
+            color: var(--sidebar-text);
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgba(var(--sidebar-text-rgb), 0.5);
+            outline-offset: 2px;
+        }
+
+        &--active {
+            background-color: var(--button-bg);
+            color: var(--button-color);
+
+            &:hover {
+                background-color: var(--button-bg);
+                color: var(--button-color);
+            }
+
+            .SidebarPrimaryNav__icon {
+                color: inherit;
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        line-height: 0;
+    }
+
+    &__label {
+        max-width: 100%;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.2;
+        text-align: center;
+        word-break: keep-all;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .SidebarPrimaryNav {
+        flex-direction: row;
+        width: 100%;
+        padding: 8px 12px;
+        border-right: none;
+        border-bottom: 1px solid rgba(var(--sidebar-text-rgb), 0.08);
+
+        &__tab {
+            width: auto;
+            flex: 1;
+            flex-direction: row;
+            padding: 8px 12px;
+            gap: 8px;
+        }
+
+        &__label {
+            font-size: 13px;
+        }
+    }
+}
