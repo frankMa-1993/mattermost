@@ -17,6 +17,7 @@ Other useful resources:
 - [Download and Install Mattermost](https://docs.mattermost.com/guides/deployment.html) - Install, setup, and configure your own Mattermost instance.
 - [Product documentation](https://docs.mattermost.com/) - Learn how to run a Mattermost instance and take advantage of all the features.
 - [Developer documentation](https://developers.mattermost.com/) - Contribute code to Mattermost or build an integration via APIs, Webhooks, slash commands, Apps, and plugins.
+- [Project analysis document](./PROJECT_ANALYSIS.md) - Repository analysis and architecture notes.
 
 Table of contents
 =================
@@ -26,6 +27,7 @@ Table of contents
 - [Get security bulletins](#get-security-bulletins)
 - [Get involved](#get-involved)
 - [Learn more](#learn-more)
+- [Project analysis](#project-analysis)
 - [License](#license)
 - [Get the latest news](#get-the-latest-news)
 - [Contributing](#contributing)
@@ -74,6 +76,10 @@ Receive notifications of critical security updates. The sophistication of online
 - [See who's using Mattermost](https://mattermost.com/customers/)
 - [Browse over 700 Mattermost integrations](https://mattermost.com/marketplace/)
 
+## Project analysis
+
+See [PROJECT_ANALYSIS.md](./PROJECT_ANALYSIS.md) for a repository analysis and architecture overview.
+
 ## License
 
 See the [LICENSE file](LICENSE.txt) for license rights and limitations.
@@ -95,6 +101,3 @@ See the [LICENSE file](LICENSE.txt) for license rights and limitations.
 
 Please see [CONTRIBUTING.md](./CONTRIBUTING.md).
 [Join the Mattermost Contributors server](https://community.mattermost.com/signup_user_complete/?id=codoy5s743rq5mk18i7u5ksz7e) to join community discussions about contributions, development, and more.
-
-
-
