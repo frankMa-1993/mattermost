@@ -190,12 +190,12 @@ func (ch *Channels) initPlugins(rctx request.CTX, pluginDir, webappPluginDir str
 
 	ch.srv.Log().Info("Starting up plugins")
 
-	if err := os.Mkdir(pluginDir, 0744); err != nil && !os.IsExist(err) {
+	if err := os.MkdirAll(pluginDir, 0744); err != nil {
 		ch.srv.Log().Error("Failed to start up plugins", mlog.Err(err))
 		return
 	}
 
-	if err := os.Mkdir(webappPluginDir, 0744); err != nil && !os.IsExist(err) {
+	if err := os.MkdirAll(webappPluginDir, 0744); err != nil {
 		ch.srv.Log().Error("Failed to start up plugins", mlog.Err(err))
 		return
 	}
