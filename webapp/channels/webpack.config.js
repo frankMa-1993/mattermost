@@ -119,7 +119,7 @@ var config = {
             'mattermost-redux': 'packages/mattermost-redux/src',
             '@mui/styled-engine': '@mui/styled-engine-sc',
             // Pin @mui/system to the workspace copy (5.11.x) so it matches @mui/styled-engine-sc.
-            '@mui/system': path.resolve(__dirname, 'node_modules', '@mui/system'),
+            '@mui/system': path.resolve(__dirname, '..', 'node_modules', '@mui/system'),
 
             // This alias restricts single version of styled components across all packages
             'styled-components': path.resolve(__dirname, '..', 'node_modules', 'styled-components'),
