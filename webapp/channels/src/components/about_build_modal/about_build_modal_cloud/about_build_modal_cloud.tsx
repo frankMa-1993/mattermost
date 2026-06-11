@@ -85,7 +85,7 @@ export default function AboutBuildModalCloud(props: Props) {
                     </div>
                     <div>
                         <h3 className='about-modal__title'>
-                            <strong>{'Mattermost'} {title}</strong>
+                            <strong>{'龙智协同'} {title}</strong>
                         </h3>
                         <p className='subtitle'>{subTitle}</p>
                         <div className='description'>

@@ -332,7 +332,7 @@ export default function AboutBuildModal(props: Props) {
                     <div>
                         <h3 className='about-modal__title'>
                             <strong>
-                                {'Mattermost'} {title}
+                                {'龙智协同'} {title}
                             </strong>
                         </h3>
                         <p className='about-modal__subtitle pb-2'>
