@@ -3,105 +3,52 @@
 
 import {getAllLanguages, getLanguageInfo, getLanguages, isLanguageAvailable, languages, normalizeLocale} from './i18n';
 
-jest.mock('./imports', () => ({
-    langIDs: ['cc'],
-    langFiles: {cc: 'cc.json'},
-    langLabels: {cc: 'CC Language'},
-}));
-
 describe('i18n', () => {
-    test('getAllLanguages', () => {
-        // no experimental languages
+    test('getAllLanguages returns only zh-CN', () => {
         expect(getAllLanguages()).toBe(languages);
-        expect(getAllLanguages(false)).toBe(languages);
-
-        // with experimental languages
-        expect(getAllLanguages(true)).toStrictEqual({
-            cc: {
-                name: 'CC Language (Experimental)',
-                value: 'cc',
-                order: 22,
-                url: 'cc.json',
-            },
-            ...languages,
-        });
+        expect(getAllLanguages(true)).toBe(languages);
+        expect(languages).toHaveProperty('zh-CN');
+        expect(Object.keys(languages)).toHaveLength(1);
     });
 
-    test('getLanguages', () => {
+    test('getLanguages returns only zh-CN', () => {
         const state = {
             entities: {
                 general: {
-                    config: {
-                    },
+                    config: {},
                 },
             },
         };
 
-        // no experimental languages
         expect(getLanguages(state)).toBe(languages);
-
-        // with experimental languages
-        state.entities.general.config.EnableExperimentalLocales = 'true';
-        expect(getLanguages(state)).toStrictEqual({
-            cc: {
-                name: 'CC Language (Experimental)',
-                value: 'cc',
-                order: 22,
-                url: 'cc.json',
-            },
-            ...languages,
-        });
-
-        state.entities.general.config.AvailableLocales = ' zh_cn , en ';
-        expect(getLanguages(state)).toStrictEqual({
-            'zh-CN': languages['zh-CN'],
-            en: languages.en,
-        });
     });
 
-    test('getLanguageInfo', () => {
-        // supported language
-        expect(getLanguageInfo('en')).toStrictEqual({
-            name: 'English (US)',
-            order: 1,
-            url: '',
-            value: 'en',
-        });
-
-        // experimental language (e.g. in progress)
-        expect(getLanguageInfo('cc')).toStrictEqual({
-            name: 'CC Language (Experimental)',
-            value: 'cc',
-            order: 22,
-            url: 'cc.json',
-        });
-
-        // non existant
-        expect(getLanguageInfo('invalid')).not.toBeDefined();
+    test('getLanguageInfo returns zh-CN info', () => {
+        const info = getLanguageInfo('zh-CN');
+        expect(info).toBeDefined();
+        expect(info.value).toBe('zh-CN');
     });
 
     test('isLanguageAvailable', () => {
         const state = {
             entities: {
                 general: {
-                    config: {
-                    },
+                    config: {},
                 },
             },
         };
 
-        // no experimental languages
-        expect(isLanguageAvailable(state, 'cc')).toBe(false);
+        // zh-CN is always available
+        expect(isLanguageAvailable(state, 'zh-CN')).toBe(true);
 
-        // with experimental languages
-        state.entities.general.config.EnableExperimentalLocales = 'true';
-        expect(isLanguageAvailable(state, 'cc')).toBe(true);
+        // Any locale normalizes to zh-CN which is available
+        expect(isLanguageAvailable(state, 'en')).toBe(true);
     });
 
-    test('normalizeLocale', () => {
-        expect(normalizeLocale(' zh_cn ')).toBe('zh-CN');
-        expect(normalizeLocale('PT-br')).toBe('pt-BR');
-        expect(normalizeLocale('en-us')).toBe('en');
-        expect(normalizeLocale('invalid')).toBe('invalid');
+    test('normalizeLocale always returns zh-CN', () => {
+        expect(normalizeLocale('zh-CN')).toBe('zh-CN');
+        expect(normalizeLocale('en')).toBe('zh-CN');
+        expect(normalizeLocale('fr')).toBe('zh-CN');
+        expect(normalizeLocale('')).toBe('zh-CN');
     });
 });

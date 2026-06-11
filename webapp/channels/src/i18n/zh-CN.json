@@ -7598,5 +7598,9 @@
   "webapp.mattermost.feature.start_call": "开始通话",
   "webapp.mattermost.feature.unlimited_file_storage": "无限文件存储",
   "webapp.mattermost.feature.unlimited_messages": "无限消息",
-  "webapp.mattermost.feature.upgrade_downgraded_workspace": "将工作区恢复为付费套餐"
+  "webapp.mattermost.feature.upgrade_downgraded_workspace": "将工作区恢复为付费套餐",
+  "widget.passwordInput.createPassword": "选择密码",
+  "widget.passwordInput.hidePassword": "隐藏密码",
+  "widget.passwordInput.password": "密码",
+  "widget.passwordInput.showPassword": "显示密码"
 }

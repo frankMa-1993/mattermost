@@ -68,31 +68,11 @@ var TDefault TranslateFunc = func(translationID string, args ...any) string {
 
 var locales = make(map[string]string)
 
-// supportedLocales is a hard-coded list of locales considered ready for production use. It must
-// be kept in sync with ../../../../webapp/channels/src/i18n/i18n.jsx.
+// supportedLocales is a hard-coded list of locales considered ready for production use.
+// Simplified for Chinese-only (zh-CN) support.
 var supportedLocales = []string{
-	"de",
 	"en",
-	"en-AU",
-	"es",
-	"fr",
-	"it",
-	"hu",
-	"nl",
-	"pl",
-	"pt-BR",
-	"ro",
-	"sv",
-	"vi",
-	"tr",
-	"bg",
-	"ru",
-	"uk",
-	"fa",
-	"ko",
 	"zh-CN",
-	"zh-TW",
-	"ja",
 }
 
 var (

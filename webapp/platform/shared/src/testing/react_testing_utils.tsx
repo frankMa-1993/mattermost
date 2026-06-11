@@ -22,7 +22,7 @@ export const renderWithContext = (
 ) => {
     const options = {
         intlMessages: partialOptions?.intlMessages,
-        locale: partialOptions?.locale ?? 'en',
+        locale: partialOptions?.locale ?? 'zh-CN',
         sharedContext: partialOptions?.sharedContext,
     };
 
@@ -57,7 +57,7 @@ export const renderHookWithContext = <TProps, TResult>(
 ) => {
     const options = {
         intlMessages: partialOptions?.intlMessages,
-        locale: partialOptions?.locale ?? 'en',
+        locale: partialOptions?.locale ?? 'zh-CN',
         sharedContext: partialOptions?.sharedContext,
     };
 

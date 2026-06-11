@@ -9,188 +9,22 @@ import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import {langFiles, langIDs, langLabels} from './imports';
 
-// should match the values in server/public/shared/i18n/i18n.go
+// Simplified for Chinese-only (zh-CN) support
 export const languages = {
-    de: {
-        value: 'de',
-        name: 'Deutsch',
-        order: 0,
-        url: langFiles.de,
-    },
-    en: {
-        value: 'en',
-        name: 'English (US)',
-        order: 1,
-        url: '',
-    },
-    'en-AU': {
-        value: 'en-AU',
-        name: 'English (Australia)',
-        order: 2,
-        url: langFiles['en-AU'],
-    },
-    es: {
-        value: 'es',
-        name: 'Español (Alpha)',
-        order: 3,
-        url: langFiles.es,
-    },
-    fr: {
-        value: 'fr',
-        name: 'Français (Alpha)',
-        order: 4,
-        url: langFiles.fr,
-    },
-    it: {
-        value: 'it',
-        name: 'Italiano (Alpha)',
-        order: 5,
-        url: langFiles.it,
-    },
-    hu: {
-        value: 'hu',
-        name: 'Magyar (Alpha)',
-        order: 6,
-        url: langFiles.hu,
-    },
-    nl: {
-        value: 'nl',
-        name: 'Nederlands',
-        order: 7,
-        url: langFiles.nl,
-    },
-    pl: {
-        value: 'pl',
-        name: 'Polski',
-        order: 8,
-        url: langFiles.pl,
-    },
-    'pt-BR': {
-        value: 'pt-BR',
-        name: 'Português (Brasil) (Alpha)',
-        order: 9,
-        url: langFiles['pt-BR'],
-    },
-    ro: {
-        value: 'ro',
-        name: 'Română (Alpha)',
-        order: 10,
-        url: langFiles.ro,
-    },
-    sv: {
-        value: 'sv',
-        name: 'Svenska',
-        order: 11,
-        url: langFiles.sv,
-    },
-    vi: {
-        value: 'vi',
-        name: 'Tiếng Việt (Beta)',
-        order: 12,
-        url: langFiles.vi,
-    },
-    tr: {
-        value: 'tr',
-        name: 'Türkçe',
-        order: 13,
-        url: langFiles.tr,
-    },
-    bg: {
-        value: 'bg',
-        name: 'Български (Alpha)',
-        order: 14,
-        url: langFiles.bg,
-    },
-    ru: {
-        value: 'ru',
-        name: 'Pусский',
-        order: 15,
-        url: langFiles.ru,
-    },
-    uk: {
-        value: 'uk',
-        name: 'Yкраїнська',
-        order: 16,
-        url: langFiles.uk,
-    },
-    fa: {
-        value: 'fa',
-        name: 'فارسی (Alpha)',
-        order: 17,
-        url: langFiles.fa,
-    },
-    ko: {
-        value: 'ko',
-        name: '한국어',
-        order: 18,
-        url: langFiles.ko,
-    },
     'zh-CN': {
         value: 'zh-CN',
-        name: '中文 (简体) (Beta)',
-        order: 19,
+        name: '中文（中国大陆）',
+        order: 0,
         url: langFiles['zh-CN'],
-    },
-    'zh-TW': {
-        value: 'zh-TW',
-        name: '中文 (繁體) (Beta)',
-        order: 20,
-        url: langFiles['zh-TW'],
-    },
-    ja: {
-        value: 'ja',
-        name: '日本語',
-        order: 21,
-        url: langFiles.ja,
     },
 };
 
 export function normalizeLocale(locale) {
-    if (!locale) {
-        return '';
-    }
-
-    const normalizedLocale = locale.trim().replace(/_/g, '-');
-    const allLanguages = getAllLanguages(true);
-
-    if (allLanguages[normalizedLocale]) {
-        return normalizedLocale;
-    }
-
-    const exactLocale = Object.keys(allLanguages).find((key) => key.toLowerCase() === normalizedLocale.toLowerCase());
-    if (exactLocale) {
-        return exactLocale;
-    }
-
-    const baseLocale = normalizedLocale.split('-')[0];
-    if (allLanguages[baseLocale]) {
-        return baseLocale;
-    }
-
-    const exactBaseLocale = Object.keys(allLanguages).find((key) => key.toLowerCase() === baseLocale.toLowerCase());
-    if (exactBaseLocale) {
-        return exactBaseLocale;
-    }
-
-    return normalizedLocale;
+    // Always return zh-CN since only Chinese is supported
+    return 'zh-CN';
 }
 
 export function getAllLanguages(includeExperimental) {
-    if (includeExperimental) {
-        let order = Object.keys(languages).length;
-        return {
-            ...langIDs.reduce((out, id) => {
-                out[id] = {
-                    value: id,
-                    name: langLabels[id] + ' (Experimental)',
-                    url: langFiles[id],
-                    order: order++,
-                };
-                return out;
-            }, {}),
-            ...languages,
-        };
-    }
     return languages;
 }
 
@@ -199,21 +33,11 @@ export function getAllLanguages(includeExperimental) {
  * @returns {Record<string, Language>}
  */
 export function getLanguages(state) {
-    const config = getConfig(state);
-    if (!config.AvailableLocales) {
-        return getAllLanguages(config.EnableExperimentalLocales === 'true');
-    }
-    return config.AvailableLocales.split(',').reduce((result, l) => {
-        const locale = normalizeLocale(l);
-        if (languages[locale]) {
-            result[locale] = languages[locale];
-        }
-        return result;
-    }, {});
+    return languages;
 }
 
 export function getLanguageInfo(locale) {
-    return getAllLanguages(true)[normalizeLocale(locale)];
+    return languages['zh-CN'];
 }
 
 /**
@@ -222,5 +46,5 @@ export function getLanguageInfo(locale) {
  * @returns {boolean}
  */
 export function isLanguageAvailable(state, locale) {
-    return Boolean(getLanguages(state)[normalizeLocale(locale)]);
+    return normalizeLocale(locale) === 'zh-CN';
 }

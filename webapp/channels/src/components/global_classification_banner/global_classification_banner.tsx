@@ -10,6 +10,7 @@ import type {GlobalState} from '@mattermost/types/store';
 import {fetchPropertyFields, fetchSystemPropertyValues} from 'mattermost-redux/actions/properties';
 import {getFeatureFlagValue} from 'mattermost-redux/selectors/entities/general';
 import {getPropertyValueForTargetField} from 'mattermost-redux/selectors/entities/properties';
+import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
 import {getContrastingSimpleColor} from 'mattermost-redux/utils/theme_utils';
 
 import {
@@ -47,6 +48,7 @@ function selectLinkedSystemField(state: GlobalState): PropertyField | undefined 
 export default function GlobalClassificationBanner({position}: Props) {
     const dispatch = useDispatch();
     const featureEnabled = useSelector((state: GlobalState) => getFeatureFlagValue(state, 'ClassificationMarkings') === 'true');
+    const currentUserId = useSelector(getCurrentUserId);
     const linkedField = useSelector(selectLinkedSystemField);
     const systemValue = useSelector((state: GlobalState) => {
         if (!linkedField) {
@@ -62,7 +64,7 @@ export default function GlobalClassificationBanner({position}: Props) {
     // The effect must re-run when linkedField arrives in the store so the values
     // fetch can proceed (it depends on linkedField being present).
     useEffect(() => {
-        if (!featureEnabled) {
+        if (!featureEnabled || !currentUserId) {
             return;
         }
         if (!linkedField) {
@@ -76,7 +78,7 @@ export default function GlobalClassificationBanner({position}: Props) {
         if (linkedField && !systemValue) {
             dispatch(fetchSystemPropertyValues(CLASSIFICATIONS_GROUP_NAME));
         }
-    }, [featureEnabled, linkedField, systemValue, dispatch]);
+    }, [currentUserId, featureEnabled, linkedField, systemValue, dispatch]);
 
     // Display conditions are encoded in the linked field's attrs.actions.
     const actions = (linkedField?.attrs?.actions as string[] | undefined) ?? [];
@@ -100,7 +102,7 @@ export default function GlobalClassificationBanner({position}: Props) {
     const color = levelOption?.color ?? '';
     const textColor = useMemo(() => (color ? getContrastingSimpleColor(color) : ''), [color]);
 
-    const shouldRender = featureEnabled && Boolean(levelName) && (
+    const shouldRender = Boolean(currentUserId) && featureEnabled && Boolean(levelName) && (
         position === 'top' ? shouldRenderTop : shouldRenderBottom
     );
 

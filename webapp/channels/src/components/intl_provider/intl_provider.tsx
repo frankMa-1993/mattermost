@@ -6,7 +6,6 @@ import type {ReactNode} from 'react';
 import {IntlProvider as BaseIntlProvider, useIntl} from 'react-intl';
 import type {IntlConfig} from 'react-intl';
 
-import {Client4} from 'mattermost-redux/client';
 import {setLocalizeFunction} from 'mattermost-redux/utils/i18n_utils';
 
 import * as I18n from 'i18n/i18n';
@@ -40,48 +39,34 @@ function IntlCapture() {
 
 export default class IntlProvider extends React.PureComponent<Props> {
     getNormalizedLocale = () => {
-        return I18n.normalizeLocale(this.props.locale) || this.props.locale;
+        return 'zh-CN';
     };
 
     componentDidMount() {
         // Pass localization function back to mattermost-redux
         setLocalizeFunction(localizeMessage);
 
-        this.handleLocaleChange(this.getNormalizedLocale());
+        this.handleLocaleChange();
     }
 
-    componentDidUpdate(prevProps: Props) {
-        const prevLocale = I18n.normalizeLocale(prevProps.locale) || prevProps.locale;
-        const locale = this.getNormalizedLocale();
+    // Locale change detection removed - only zh-CN is supported
 
-        if (prevLocale !== locale) {
-            Client4.setAcceptLanguage(locale);
-
-            const localeInfo = I18n.getLanguageInfo(locale);
-            if (localeInfo) {
-                this.props.actions.loadTranslations(locale, localeInfo.url);
-            }
-        }
-    }
-
-    handleLocaleChange = (locale: string) => {
-        Client4.setAcceptLanguage(locale);
-
-        this.loadTranslationsIfNecessary(locale);
+    handleLocaleChange = () => {
+        this.loadTranslationsIfNecessary();
     };
 
-    loadTranslationsIfNecessary = (locale: string) => {
+    loadTranslationsIfNecessary = () => {
         if (this.props.translations) {
             // Already loaded
             return;
         }
-        const localeInfo = I18n.getLanguageInfo(locale);
+        const localeInfo = I18n.getLanguageInfo('zh-CN');
 
         if (!localeInfo) {
             return;
         }
 
-        this.props.actions.loadTranslations(locale, localeInfo.url);
+        this.props.actions.loadTranslations('zh-CN', localeInfo.url);
     };
 
     render() {
@@ -89,15 +74,22 @@ export default class IntlProvider extends React.PureComponent<Props> {
             return null;
         }
 
-        const locale = this.getNormalizedLocale();
-
         return (
             <BaseIntlProvider
-                key={locale}
-                locale={locale}
+                key='zh-CN'
+                locale='zh-CN'
                 messages={this.props.translations}
                 textComponent='span'
                 wrapRichTextChunksInFragment={false}
+                onError={(err) => {
+                    // Suppress MISSING_TRANSLATION warnings in production
+                    // to avoid console noise from missing translation keys.
+                    // The defaultMessage fallback handles the actual display.
+                    if (err.code === 'MISSING_TRANSLATION') {
+                        return;
+                    }
+                    console.error(err);
+                }}
             >
                 <IntlCapture/>
                 {this.props.children}

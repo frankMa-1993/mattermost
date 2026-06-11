@@ -18,13 +18,10 @@ import SettingItem from 'components/setting_item';
 import SettingItemMax from 'components/setting_item_max';
 import ThemeSetting from 'components/user_settings/display/user_settings_theme';
 
-import {getLanguageInfo} from 'i18n/i18n';
-import type {Language} from 'i18n/i18n';
 import Constants from 'utils/constants';
 import {getBrowserTimezone} from 'utils/timezone';
 import {a11yFocus} from 'utils/utils';
 
-import ManageLanguages from './manage_languages';
 import ManageTimezones from './manage_timezones';
 import RenderEmoticonsAsEmoji from './render_emoticons_as_emoji';
 
@@ -97,7 +94,7 @@ type Props = OwnProps & {
     userTimezone: UserTimezone;
     allowCustomThemes: boolean;
     enableLinkPreviews: boolean;
-    locales: Record<string, Language>;
+    locales: Record<string, any>;
     userLocale: string;
     enableThemeSelection: boolean;
     configTeammateNameDisplay: string;
@@ -155,7 +152,6 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
         linkpreview: string;
         message_display: string;
         channel_display_mode: string;
-        languages: string;
     };
 
     constructor(props: Props) {
@@ -172,7 +168,6 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
             linkpreview: 'clock',
             message_display: 'linkpreview',
             channel_display_mode: 'message_display',
-            languages: 'channel_display_mode',
         };
     }
 
@@ -1047,40 +1042,8 @@ export default class UserSettingsDisplay extends React.PureComponent<Props, Stat
             }),
         });
 
-        let languagesSection;
-        const userLocale = this.props.userLocale;
-        const localeName = getLanguageInfo(userLocale).name;
-
-        languagesSection = (
-            <div>
-                <SettingItem
-                    active={this.props.activeSection === 'languages'}
-                    areAllSectionsInactive={this.props.activeSection === ''}
-                    title={
-                        <FormattedMessage
-                            id='user.settings.display.language'
-                            defaultMessage='Language'
-                        />
-                    }
-                    describe={localeName}
-                    section={'languages'}
-                    updateSection={this.updateSection}
-                    max={(
-                        <ManageLanguages
-                            user={this.props.user}
-                            locale={userLocale}
-                            updateSection={this.updateSection}
-                            adminMode={this.props.adminMode}
-                        />
-                    )}
-                />
-                <div className='divider-dark'/>
-            </div>
-        );
-
-        if (Object.keys(this.props.locales).length === 1) {
-            languagesSection = null;
-        }
+        // Language section removed - only zh-CN is supported
+        const languagesSection = null;
 
         let themeSection;
         if (this.props.enableThemeSelection && !this.props.adminMode) {

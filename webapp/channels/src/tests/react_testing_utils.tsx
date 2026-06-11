@@ -48,7 +48,7 @@ export const renderWithContext = (
 ) => {
     const options = {
         intlMessages: partialOptions?.intlMessages,
-        locale: partialOptions?.locale ?? 'en',
+        locale: partialOptions?.locale ?? 'zh-CN',
         useMockedStore: partialOptions?.useMockedStore ?? false,
     };
 
@@ -108,7 +108,7 @@ export const renderHookWithContext = <TProps, TResult>(
 ) => {
     const options = {
         intlMessages: partialOptions?.intlMessages,
-        locale: partialOptions?.locale ?? 'en',
+        locale: partialOptions?.locale ?? 'zh-CN',
         useMockedStore: partialOptions?.useMockedStore ?? false,
     };
 

@@ -5,7 +5,7 @@ import React from 'react';
 import {createIntl, useIntl} from 'react-intl';
 
 import enMessages from 'i18n/en.json';
-import esMessages from 'i18n/es.json';
+import zhCNMessages from 'i18n/zh-CN.json';
 import {renderWithContext, screen} from 'tests/react_testing_utils';
 import {TestHelper} from 'utils/test_helper';
 
@@ -68,11 +68,11 @@ describe('LatestPostReader', () => {
         expect(prevMessage).toBeInTheDocument();
         expect(prevMessage).toHaveClass('sr-only');
 
-        (useIntl as jest.Mock).mockImplementation(() => createIntl({locale: 'es', messages: esMessages, defaultLocale: 'es'}));
+        (useIntl as jest.Mock).mockImplementation(() => createIntl({locale: 'zh-CN', messages: zhCNMessages, defaultLocale: 'zh-CN'}));
 
         rerender(<LatestPostReader {...baseProps}/>);
-        const januaryInSpanish = 'enero';
-        const message = screen.getByText(`${januaryInSpanish}, ${author.username} wrote, This is a test`, {exact: false});
+        const januaryInChinese = '一月';
+        const message = screen.getByText(`${januaryInChinese}, ${author.username} wrote, This is a test`, {exact: false});
 
         expect(message).toBeInTheDocument();
         expect(message).toHaveClass('sr-only');

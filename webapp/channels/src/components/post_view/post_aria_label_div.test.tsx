@@ -5,7 +5,7 @@ import React from 'react';
 import * as reactIntl from 'react-intl';
 
 import enMessages from 'i18n/en.json';
-import esMessages from 'i18n/es.json';
+import zhCNMessages from 'i18n/zh-CN.json';
 import {renderWithContext, screen} from 'tests/react_testing_utils';
 import {TestHelper} from 'utils/test_helper';
 
@@ -65,16 +65,16 @@ describe('PostAriaLabelDiv', () => {
         expect(div.getAttribute('aria-label')).toContain(author.username);
         expect(div.getAttribute('aria-label')).toContain('January');
 
-        (reactIntl.useIntl as jest.Mock).mockImplementation(() => reactIntl.createIntl({locale: 'es', messages: esMessages, defaultLocale: 'es'}));
+        (reactIntl.useIntl as jest.Mock).mockImplementation(() => reactIntl.createIntl({locale: 'zh-CN', messages: zhCNMessages, defaultLocale: 'zh-CN'}));
 
         renderResult = renderWithContext(<PostAriaLabelDiv {...baseProps}/>, baseState, {
-            locale: 'es',
-            intlMessages: esMessages,
+            locale: 'zh-CN',
+            intlMessages: zhCNMessages,
         });
         div = renderResult.container.firstChild as HTMLElement;
 
         expect(div.getAttribute('aria-label')).toContain(author.username);
-        expect(div.getAttribute('aria-label')).toContain('enero');
+        expect(div.getAttribute('aria-label')).toContain('一月');
     });
 
     test('should pass other props through to the rendered div', () => {

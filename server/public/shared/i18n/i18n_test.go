@@ -110,7 +110,7 @@ func TestInitTranslationsWithDir(t *testing.T) {
 	}
 
 	t.Run("unsupported locale ignored", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN", "zz": "en"})
 
 		err := initTranslationsWithDir(tempDir)
 		require.NoError(t, err)
@@ -120,7 +120,7 @@ func TestInitTranslationsWithDir(t *testing.T) {
 	})
 
 	t.Run("malformed, unsupported locale ignored", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN", "zz": "en"})
 
 		err := os.WriteFile(filepath.Join(tempDir, "xx.json"), []byte{'{'}, os.ModePerm)
 		require.NoError(t, err)
@@ -133,7 +133,7 @@ func TestInitTranslationsWithDir(t *testing.T) {
 	})
 
 	t.Run("malformed, supported locale causes error", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"zh-CN": "zh-CN", "zz": "en"})
 
 		err := os.WriteFile(filepath.Join(tempDir, "en.json"), []byte{'{'}, os.ModePerm)
 		require.NoError(t, err)
@@ -143,15 +143,15 @@ func TestInitTranslationsWithDir(t *testing.T) {
 	})
 
 	t.Run("known locales loaded ", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN"})
 
 		err := initTranslationsWithDir(tempDir)
 		require.NoError(t, err)
 
 		_, found := locales["en"]
 		require.True(t, found, "should have found en locale")
-		_, found = locales["fr"]
-		require.True(t, found, "should have found fr locale")
+		_, found = locales["zh-CN"]
+		require.True(t, found, "should have found zh-CN locale")
 		_, found = locales["es"]
 		require.False(t, found, "should not have found unloaded es locale")
 	})
@@ -182,7 +182,7 @@ func TestGetTranslationFuncForDir(t *testing.T) {
 	}
 
 	t.Run("unknown locale falls back to english", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN", "zz": "en"})
 
 		translationFunc, err := GetTranslationFuncForDir(tempDir)
 		require.NoError(t, err)
@@ -192,7 +192,7 @@ func TestGetTranslationFuncForDir(t *testing.T) {
 	})
 
 	t.Run("unsupported locale falls back to english", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN", "zz": "en"})
 
 		translationFunc, err := GetTranslationFuncForDir(tempDir)
 		require.NoError(t, err)
@@ -202,7 +202,7 @@ func TestGetTranslationFuncForDir(t *testing.T) {
 	})
 
 	t.Run("malformed, unsupported locale ignored and falls back to english", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN", "zz": "en"})
 
 		err := os.WriteFile(filepath.Join(tempDir, "xx.json"), []byte{'{'}, os.ModePerm)
 		require.NoError(t, err)
@@ -215,7 +215,7 @@ func TestGetTranslationFuncForDir(t *testing.T) {
 	})
 
 	t.Run("malformed, supported locale causes error", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"fr": "fr", "zz": "en"})
+		tempDir := setup(t, map[string]string{"zh-CN": "zh-CN", "zz": "en"})
 
 		err := os.WriteFile(filepath.Join(tempDir, "en.json"), []byte{'{'}, os.ModePerm)
 		require.NoError(t, err)
@@ -226,13 +226,13 @@ func TestGetTranslationFuncForDir(t *testing.T) {
 	})
 
 	t.Run("known locale matches", func(t *testing.T) {
-		tempDir := setup(t, map[string]string{"en": "en", "fr": "fr"})
+		tempDir := setup(t, map[string]string{"en": "en", "zh-CN": "zh-CN"})
 
 		translationFunc, err := GetTranslationFuncForDir(tempDir)
 		require.NoError(t, err)
 		require.NotNil(t, translationFunc)
 
-		require.Equal(t, "Décembre", translationFunc("fr")("December"))
+		require.Equal(t, "12", translationFunc("zh-CN")("December"))
 		require.Equal(t, "December", translationFunc("en")("December"))
 	})
 }

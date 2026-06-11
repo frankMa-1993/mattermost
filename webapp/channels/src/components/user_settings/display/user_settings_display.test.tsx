@@ -15,11 +15,6 @@ jest.mock('./manage_timezones', () => ({
     default: () => <div data-testid='manage-timezones'/>,
 }));
 
-jest.mock('./manage_languages', () => ({
-    __esModule: true,
-    default: () => <div data-testid='manage-languages'/>,
-}));
-
 jest.mock('components/user_settings/display/user_settings_theme', () => ({
     __esModule: true,
     default: () => <div data-testid='theme-setting'/>,

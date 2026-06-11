@@ -7,7 +7,6 @@
 ## Key Scripts
 - `dev-server.mjs` – webpack-dev-server bootstrap; shares config with `make dev`.
 - `run.mjs`, `build.mjs`, `dist` helpers – orchestrate multi-workspace builds and env wiring.
-- `gen_lang_imports.mjs` – regenerates locale import lists.
 - `update-versions.sh` - updates version of published platform packages.
 
 ## Guidelines

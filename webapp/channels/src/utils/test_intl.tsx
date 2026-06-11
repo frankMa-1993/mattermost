@@ -6,8 +6,8 @@ import React from 'react';
 import {IntlProvider, createIntl} from 'react-intl';
 
 export const defaultIntl = createIntl({
-    locale: 'en',
-    defaultLocale: 'en',
+    locale: 'zh-CN',
+    defaultLocale: 'zh-CN',
     messages: {},
 });
 

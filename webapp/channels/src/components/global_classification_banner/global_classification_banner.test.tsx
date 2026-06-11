@@ -73,12 +73,14 @@ type StateOptions = {
     linkedField?: PropertyField | null;
     systemValue?: PropertyValue<string> | null;
     featureFlagEnabled?: boolean;
+    currentUserId?: string;
 };
 
 function makeState({
     linkedField = null,
     systemValue = null,
     featureFlagEnabled = true,
+    currentUserId = MOCK_USER_ID,
 }: StateOptions = {}): DeepPartial<GlobalState> {
     const fieldsById: Record<string, PropertyField> = {};
     if (linkedField) {
@@ -95,7 +97,7 @@ function makeState({
     return {
         entities: {
             users: {
-                currentUserId: MOCK_USER_ID,
+                currentUserId,
             },
             general: {
                 config: {
@@ -120,7 +122,7 @@ describe('GlobalClassificationBanner', () => {
 
         // Prevent the bootstrap useEffect from making real HTTP calls.
         jest.spyOn(Client4, 'getPropertyFields').mockResolvedValue([]);
-        jest.spyOn(Client4, 'getPropertyValues').mockResolvedValue([]);
+        jest.spyOn(Client4, 'getSystemPropertyValues').mockResolvedValue([]);
     });
 
     test('renders top banner with level name and background color from template options', () => {
@@ -281,5 +283,16 @@ describe('GlobalClassificationBanner', () => {
             CLASSIFICATIONS_FIELD_TARGET_ID,
             expect.anything(),
         );
+    });
+
+    test('does not trigger bootstrap fetch before the current user is loaded', () => {
+        renderWithContext(
+            <GlobalClassificationBanner position='top'/>,
+            makeState({linkedField: null, currentUserId: ''}),
+        );
+
+        expect(Client4.getPropertyFields).not.toHaveBeenCalled();
+        expect(Client4.getSystemPropertyValues).not.toHaveBeenCalled();
+        expect(screen.queryByTestId('global-classification-banner-top')).not.toBeInTheDocument();
     });
 });
