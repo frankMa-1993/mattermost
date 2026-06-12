@@ -6,8 +6,13 @@ import React, {useCallback} from 'react';
 import {defineMessages, useIntl} from 'react-intl';
 
 import {
-    FileTextOutlineIcon,
+    AccountMultipleOutlineIcon,
+    BookOutlineIcon,
+    ClockOutlineIcon,
+    CreationOutlineIcon,
+    FormatListBulletedIcon,
     MessageTextOutlineIcon,
+    ViewGridPlusOutlineIcon,
 } from '@mattermost/compass-icons/components';
 
 import {SidebarPrimaryTab} from './types';
@@ -15,13 +20,33 @@ import {SidebarPrimaryTab} from './types';
 import './sidebar_primary_nav.scss';
 
 const messages = defineMessages({
+    homeTab: {
+        id: 'sidebar_primary_nav.home',
+        defaultMessage: 'Home',
+    },
+    aiWorkbenchTab: {
+        id: 'sidebar_primary_nav.ai_workbench',
+        defaultMessage: 'AI Workbench',
+    },
     messagesTab: {
         id: 'sidebar_primary_nav.messages',
         defaultMessage: 'Messages',
     },
-    documentsTab: {
-        id: 'sidebar_primary_nav.documents',
-        defaultMessage: 'Documents',
+    tasksTab: {
+        id: 'sidebar_primary_nav.tasks',
+        defaultMessage: 'Tasks',
+    },
+    contactsTab: {
+        id: 'sidebar_primary_nav.contacts',
+        defaultMessage: 'Contacts',
+    },
+    meetingsTab: {
+        id: 'sidebar_primary_nav.meetings',
+        defaultMessage: 'Meeting Schedule',
+    },
+    knowledgeBaseTab: {
+        id: 'sidebar_primary_nav.knowledge_base',
+        defaultMessage: 'Knowledge Base',
     },
 });
 
@@ -41,14 +66,39 @@ function SidebarPrimaryNav({activeTab, onTabChange}: Props) {
 
     const tabs: TabConfig[] = [
         {
+            id: SidebarPrimaryTab.Home,
+            label: formatMessage(messages.homeTab),
+            icon: <ViewGridPlusOutlineIcon size={22}/>,
+        },
+        {
+            id: SidebarPrimaryTab.AIWorkbench,
+            label: formatMessage(messages.aiWorkbenchTab),
+            icon: <CreationOutlineIcon size={22}/>,
+        },
+        {
             id: SidebarPrimaryTab.Messages,
             label: formatMessage(messages.messagesTab),
             icon: <MessageTextOutlineIcon size={22}/>,
         },
         {
-            id: SidebarPrimaryTab.Documents,
-            label: formatMessage(messages.documentsTab),
-            icon: <FileTextOutlineIcon size={22}/>,
+            id: SidebarPrimaryTab.Tasks,
+            label: formatMessage(messages.tasksTab),
+            icon: <FormatListBulletedIcon size={22}/>,
+        },
+        {
+            id: SidebarPrimaryTab.Contacts,
+            label: formatMessage(messages.contactsTab),
+            icon: <AccountMultipleOutlineIcon size={22}/>,
+        },
+        {
+            id: SidebarPrimaryTab.Meetings,
+            label: formatMessage(messages.meetingsTab),
+            icon: <ClockOutlineIcon size={22}/>,
+        },
+        {
+            id: SidebarPrimaryTab.KnowledgeBase,
+            label: formatMessage(messages.knowledgeBaseTab),
+            icon: <BookOutlineIcon size={22}/>,
         },
     ];
 

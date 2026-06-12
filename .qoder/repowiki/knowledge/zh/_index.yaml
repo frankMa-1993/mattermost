@@ -2,7 +2,7 @@
 schema_version: 1
 locale: zh-CN
 branch: release
-exported_at: "2026-06-11T09:13:24Z"
+exported_at: "2026-06-11T10:23:52Z"
 modules:
     "":
         dir_name: Mattermost 协作平台全栈工程体系

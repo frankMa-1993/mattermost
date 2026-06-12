@@ -22,7 +22,12 @@ export enum LhsPage {
     Drafts = 'drafts',
     Recaps = 'recaps',
     Threads = 'threads',
-    Documents = 'documents',
+    Home = 'home',
+    AIWorkbench = 'ai-workbench',
+    Tasks = 'tasks',
+    Contacts = 'contacts',
+    Meetings = 'meetings',
+    KnowledgeBase = 'knowledge-base',
 }
 
 export type StaticPage = {

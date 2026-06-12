@@ -1,5 +1,7 @@
 .SidebarPrimaryNav {
     display: flex;
+    overflow-x: hidden;
+    overflow-y: auto;
     flex-direction: column;
     flex-shrink: 0;
     align-items: center;

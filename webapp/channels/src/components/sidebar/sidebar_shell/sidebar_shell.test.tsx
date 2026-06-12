@@ -40,11 +40,11 @@ describe('SidebarShell', () => {
         );
 
         expect(screen.getByText('Messages panel content')).toBeVisible();
-        expect(screen.getByText('Document navigation will appear here.')).not.toBeVisible();
+        expect(screen.getByText('Knowledge base navigation will appear here.')).not.toBeVisible();
 
-        fireEvent.click(screen.getByRole('tab', {name: /documents/i}));
+        fireEvent.click(screen.getByRole('tab', {name: /knowledge base/i}));
 
-        expect(screen.getByText('Document navigation will appear here.')).toBeVisible();
+        expect(screen.getByText('Knowledge base navigation will appear here.')).toBeVisible();
         expect(screen.getByText('Messages panel content')).not.toBeVisible();
 
         fireEvent.click(screen.getByRole('tab', {name: /messages/i}));

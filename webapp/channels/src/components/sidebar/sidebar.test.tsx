@@ -100,7 +100,7 @@ describe('components/sidebar', () => {
 
         expect(screen.getByRole('application', {name: /channel sidebar region/i})).toBeInTheDocument();
         expect(screen.getByRole('tab', {name: /messages/i})).toBeInTheDocument();
-        expect(screen.getByRole('tab', {name: /documents/i})).toBeInTheDocument();
+        expect(screen.getByRole('tab', {name: /knowledge base/i})).toBeInTheDocument();
     });
 
     test('should not rendering anything when teamId is missing', () => {

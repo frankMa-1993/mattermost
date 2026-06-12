@@ -1,6 +1,7 @@
 
 logs
 .DS_Store
+.qoder/
 node_modules
 /data
 /dist

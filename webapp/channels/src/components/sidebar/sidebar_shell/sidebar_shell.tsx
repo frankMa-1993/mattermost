@@ -10,14 +10,21 @@ import {getCurrentRelativeTeamUrl} from 'mattermost-redux/selectors/entities/tea
 
 import {selectLhsItem, switchToLhsStaticPage} from 'actions/views/lhs';
 
-import SidebarDocumentsMenu from 'components/sidebar/sidebar_documents_menu/sidebar_documents_menu';
 import SidebarPrimaryNav from 'components/sidebar/sidebar_primary_nav/sidebar_primary_nav';
 import {
     SIDEBAR_PRIMARY_TAB_STORAGE_KEY,
     SidebarPrimaryTab,
 } from 'components/sidebar/sidebar_primary_nav/types';
+import SidebarStaticMenu from 'components/sidebar/sidebar_static_menu/sidebar_static_menu';
+import {
+    getStaticPageConfigByPath,
+    getStaticPageConfigByTab,
+    isAnyStaticPagePath,
+    SIDEBAR_STATIC_PAGES,
+    STATIC_SIDEBAR_TABS,
+} from 'components/sidebar/sidebar_static_pages';
 
-import {LhsItemType, LhsPage} from 'types/store/lhs';
+import {LhsItemType} from 'types/store/lhs';
 
 import './sidebar_shell.scss';
 
@@ -27,10 +34,6 @@ type Props = {
     messagesContent: React.ReactNode;
 };
 
-function isDocumentsPath(pathname: string, teamUrl: string): boolean {
-    return pathname === `${teamUrl}/documents` || pathname.startsWith(`${teamUrl}/documents/`);
-}
-
 function SidebarShell({messagesContent}: Props) {
     const dispatch = useDispatch();
     const history = useHistory();
@@ -39,8 +42,9 @@ function SidebarShell({messagesContent}: Props) {
     const [activeTab, setActiveTab] = useState(SidebarPrimaryTab.Messages);
 
     useEffect(() => {
-        if (isDocumentsPath(location.pathname, teamUrl)) {
-            setActiveTab(SidebarPrimaryTab.Documents);
+        const staticPageConfig = getStaticPageConfigByPath(location.pathname, teamUrl);
+        if (staticPageConfig) {
+            setActiveTab(staticPageConfig.tab);
             return;
         }
         setActiveTab(SidebarPrimaryTab.Messages);
@@ -59,15 +63,20 @@ function SidebarShell({messagesContent}: Props) {
             // Ignore storage errors.
         }
 
-        if (tab === SidebarPrimaryTab.Documents) {
-            if (!isDocumentsPath(location.pathname, teamUrl)) {
+        if (STATIC_SIDEBAR_TABS.has(tab)) {
+            const staticPageConfig = getStaticPageConfigByTab(tab);
+            if (!staticPageConfig) {
+                return;
+            }
+
+            if (!isAnyStaticPagePath(location.pathname, teamUrl)) {
                 try {
                     sessionStorage.setItem(LAST_MESSAGES_PATH_STORAGE_KEY, location.pathname);
                 } catch {
                     // Ignore storage errors.
                 }
             }
-            dispatch(switchToLhsStaticPage(LhsPage.Documents));
+            dispatch(switchToLhsStaticPage(staticPageConfig.lhsPage));
             return;
         }
 
@@ -78,7 +87,7 @@ function SidebarShell({messagesContent}: Props) {
             // Ignore storage errors.
         }
 
-        const targetPath = returnPath && !isDocumentsPath(returnPath, teamUrl) ?
+        const targetPath = returnPath && !isAnyStaticPagePath(returnPath, teamUrl) ?
             returnPath :
             `${teamUrl}/channels/town-square`;
 
@@ -103,16 +112,19 @@ function SidebarShell({messagesContent}: Props) {
                 >
                     {messagesContent}
                 </div>
-                <div
-                    id={`sidebar_primary_panel_${SidebarPrimaryTab.Documents}`}
-                    role='tabpanel'
-                    aria-labelledby={`sidebar_primary_nav_tab_${SidebarPrimaryTab.Documents}`}
-                    className={classNames('SidebarShell__panel', {
-                        'SidebarShell__panel--active': activeTab === SidebarPrimaryTab.Documents,
-                    })}
-                >
-                    <SidebarDocumentsMenu/>
-                </div>
+                {SIDEBAR_STATIC_PAGES.map((page) => (
+                    <div
+                        key={page.tab}
+                        id={`sidebar_primary_panel_${page.tab}`}
+                        role='tabpanel'
+                        aria-labelledby={`sidebar_primary_nav_tab_${page.tab}`}
+                        className={classNames('SidebarShell__panel', {
+                            'SidebarShell__panel--active': activeTab === page.tab,
+                        })}
+                    >
+                        <SidebarStaticMenu config={page}/>
+                    </div>
+                ))}
             </div>
         </div>
     );

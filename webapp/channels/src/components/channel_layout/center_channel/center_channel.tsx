@@ -8,6 +8,7 @@ import {Route, Switch, Redirect} from 'react-router-dom';
 import {makeAsyncComponent} from 'components/async_load';
 import ChannelIdentifierRouter from 'components/channel_layout/channel_identifier_router';
 import LoadingScreen from 'components/loading_screen';
+import {renderStaticPageRoutes} from 'components/static_page/static_page_routes';
 
 import {SCHEDULED_POST_URL_SUFFIX} from 'utils/constants';
 import {IDENTIFIER_PATH_PATTERN, ID_PATH_PATTERN, TEAM_NAME_PATH_PATTERN} from 'utils/path';
@@ -30,13 +31,6 @@ const Drafts = makeAsyncComponent('Drafts', lazy(() => import('components/drafts
     ),
 );
 const Recaps = makeAsyncComponent('Recaps', lazy(() => import('components/recaps')),
-    (
-        <div className='app__content'>
-            <LoadingScreen/>
-        </div>
-    ),
-);
-const Documents = makeAsyncComponent('Documents', lazy(() => import('components/documents/documents')),
     (
         <div className='app__content'>
             <LoadingScreen/>
@@ -125,10 +119,7 @@ export default class CenterChannel extends React.PureComponent<Props, State> {
                             path={`/:team(${TEAM_NAME_PATH_PATTERN})/drafts`}
                             component={Drafts}
                         />
-                        <Route
-                            path={`/:team(${TEAM_NAME_PATH_PATTERN})/documents`}
-                            component={Documents}
-                        />
+                        {renderStaticPageRoutes()}
                         <Route
                             path={`/:team(${TEAM_NAME_PATH_PATTERN})/${SCHEDULED_POST_URL_SUFFIX}`}
                             component={Drafts}
