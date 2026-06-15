@@ -5,5 +5,4 @@ scope:
     - server/
 source_files: []
 depends_on: []
-related_to:
-    - path: api_spec
+related_to: []
