@@ -51,4 +51,26 @@ describe('SidebarShell', () => {
 
         expect(screen.getByText('Messages panel content')).toBeVisible();
     });
+
+    test('should collapse the sidebar and skip the tasks placeholder menu when tasks is selected', () => {
+        renderWithContext(
+            <Route path='/:team'>
+                <SidebarShell messagesContent={<div>{'Messages panel content'}</div>}/>
+            </Route>,
+            initialState,
+            {pathname: `/${currentTeam.name}/channels/town-square`},
+        );
+
+        const sidebarContainer = document.getElementById('SidebarContainer');
+        expect(sidebarContainer).not.toHaveClass('SidebarContainer--primaryNavOnly');
+
+        fireEvent.click(screen.getByRole('tab', {name: /tasks/i}));
+
+        expect(screen.queryByText('Task navigation will appear here.')).not.toBeInTheDocument();
+        expect(sidebarContainer).toHaveClass('SidebarContainer--primaryNavOnly');
+
+        fireEvent.click(screen.getByRole('tab', {name: /messages/i}));
+
+        expect(sidebarContainer).not.toHaveClass('SidebarContainer--primaryNavOnly');
+    });
 });

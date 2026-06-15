@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import classNames from 'classnames';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 
@@ -39,7 +39,11 @@ function SidebarShell({messagesContent}: Props) {
     const history = useHistory();
     const location = useLocation();
     const teamUrl = useSelector(getCurrentRelativeTeamUrl);
+    const shellRef = useRef<HTMLDivElement>(null);
     const [activeTab, setActiveTab] = useState(SidebarPrimaryTab.Messages);
+
+    const activeStaticPageConfig = STATIC_SIDEBAR_TABS.has(activeTab) ? getStaticPageConfigByTab(activeTab) : undefined;
+    const shouldCollapseSidebar = activeStaticPageConfig?.showSidebarMenu === false;
 
     useEffect(() => {
         const staticPageConfig = getStaticPageConfigByPath(location.pathname, teamUrl);
@@ -49,6 +53,19 @@ function SidebarShell({messagesContent}: Props) {
         }
         setActiveTab(SidebarPrimaryTab.Messages);
     }, [location.pathname, teamUrl]);
+
+    useEffect(() => {
+        const sidebarContainer = shellRef.current?.parentElement;
+        if (!sidebarContainer) {
+            return undefined;
+        }
+
+        sidebarContainer.classList.toggle('SidebarContainer--primaryNavOnly', shouldCollapseSidebar);
+
+        return () => {
+            sidebarContainer.classList.remove('SidebarContainer--primaryNavOnly');
+        };
+    }, [shouldCollapseSidebar]);
 
     const handleTabChange = useCallback((tab: SidebarPrimaryTab) => {
         if (tab === activeTab) {
@@ -96,7 +113,10 @@ function SidebarShell({messagesContent}: Props) {
     }, [activeTab, dispatch, history, location.pathname, teamUrl]);
 
     return (
-        <div className='SidebarShell'>
+        <div
+            ref={shellRef}
+            className='SidebarShell'
+        >
             <SidebarPrimaryNav
                 activeTab={activeTab}
                 onTabChange={handleTabChange}

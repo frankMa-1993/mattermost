@@ -15,6 +15,10 @@ type Props = {
 function SidebarStaticMenu({config}: Props) {
     const {formatMessage} = useIntl();
 
+    if (config.showSidebarMenu === false) {
+        return null;
+    }
+
     return (
         <div
             className='SidebarStaticMenu'

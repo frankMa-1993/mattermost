@@ -10,6 +10,7 @@ import {SidebarPrimaryTab} from './sidebar_primary_nav/types';
 export type SidebarStaticPageConfig = {
     tab: SidebarPrimaryTab;
     lhsPage: LhsPage;
+    showSidebarMenu?: boolean;
     sidebarMenu: {
         emptyTitle: {id: string; defaultMessage: string};
         emptyDescription: {id: string; defaultMessage: string};
@@ -147,6 +148,7 @@ export const SIDEBAR_STATIC_PAGES: SidebarStaticPageConfig[] = [
     {
         tab: SidebarPrimaryTab.Tasks,
         lhsPage: LhsPage.Tasks,
+        showSidebarMenu: false,
         sidebarMenu: {
             emptyTitle: messages.tasksSidebarTitle,
             emptyDescription: messages.tasksSidebarDescription,
@@ -159,6 +161,7 @@ export const SIDEBAR_STATIC_PAGES: SidebarStaticPageConfig[] = [
     {
         tab: SidebarPrimaryTab.Contacts,
         lhsPage: LhsPage.Contacts,
+        showSidebarMenu: false,
         sidebarMenu: {
             emptyTitle: messages.contactsSidebarTitle,
             emptyDescription: messages.contactsSidebarDescription,

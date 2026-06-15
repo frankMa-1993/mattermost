@@ -67,38 +67,31 @@ function SidebarPrimaryNav({activeTab, onTabChange}: Props) {
     const tabs: TabConfig[] = [
         {
             id: SidebarPrimaryTab.Home,
-            label: formatMessage(messages.homeTab),
-            icon: <ViewGridPlusOutlineIcon size={22}/>,
+            label: formatMessage(messages.homeTab)
         },
         {
             id: SidebarPrimaryTab.AIWorkbench,
-            label: formatMessage(messages.aiWorkbenchTab),
-            icon: <CreationOutlineIcon size={22}/>,
+            label: formatMessage(messages.aiWorkbenchTab)
         },
         {
             id: SidebarPrimaryTab.Messages,
-            label: formatMessage(messages.messagesTab),
-            icon: <MessageTextOutlineIcon size={22}/>,
+            label: formatMessage(messages.messagesTab)
         },
         {
             id: SidebarPrimaryTab.Tasks,
-            label: formatMessage(messages.tasksTab),
-            icon: <FormatListBulletedIcon size={22}/>,
+            label: formatMessage(messages.tasksTab)
         },
         {
             id: SidebarPrimaryTab.Contacts,
-            label: formatMessage(messages.contactsTab),
-            icon: <AccountMultipleOutlineIcon size={22}/>,
+            label: formatMessage(messages.contactsTab)
         },
         {
             id: SidebarPrimaryTab.Meetings,
-            label: formatMessage(messages.meetingsTab),
-            icon: <ClockOutlineIcon size={22}/>,
+            label: formatMessage(messages.meetingsTab)
         },
         {
             id: SidebarPrimaryTab.KnowledgeBase,
-            label: formatMessage(messages.knowledgeBaseTab),
-            icon: <BookOutlineIcon size={22}/>,
+            label: formatMessage(messages.knowledgeBaseTab)
         },
     ];
 

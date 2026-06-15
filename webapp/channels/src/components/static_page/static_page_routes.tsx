@@ -19,6 +19,20 @@ const StaticPage = makeAsyncComponent('StaticPage', lazy(() => import('component
         </div>
     ),
 );
+const TasksPage = makeAsyncComponent('TasksPage', lazy(() => import('components/static_page/tasks_page')),
+    (
+        <div className='app__content'>
+            <LoadingScreen/>
+        </div>
+    ),
+);
+const ContactsPage = makeAsyncComponent('ContactsPage', lazy(() => import('components/static_page/contacts_page')),
+    (
+        <div className='app__content'>
+            <LoadingScreen/>
+        </div>
+    ),
+);
 
 export function renderStaticPageRoutes() {
     const knowledgeBasePage = SIDEBAR_STATIC_PAGES.find((page) => page.lhsPage === LhsPage.KnowledgeBase);
@@ -29,7 +43,15 @@ export function renderStaticPageRoutes() {
                 <Route
                     key={page.lhsPage}
                     path={`/:team(${TEAM_NAME_PATH_PATTERN})/${page.lhsPage}`}
-                    render={() => <StaticPage config={page}/>}
+                    render={() => {
+                        if (page.lhsPage === LhsPage.Tasks) {
+                            return <TasksPage/>;
+                        }
+                        if (page.lhsPage === LhsPage.Contacts) {
+                            return <ContactsPage/>;
+                        }
+                        return <StaticPage config={page}/>;
+                    }}
                 />
             ))}
             {knowledgeBasePage ? (

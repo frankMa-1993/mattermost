@@ -24,6 +24,19 @@ $sidebarOpacityAnimationDuration: 0.15s;
         }
     }
 
+    &.SidebarContainer--primaryNavOnly {
+        @media screen and (min-width: 769px) {
+            --overrideLhsWidth: 72px;
+            width: 72px;
+            min-width: 72px;
+            max-width: 72px;
+
+            > .left {
+                display: none;
+            }
+        }
+    }
+
     @media screen and (min-width: 769px) {
         width: var(--overrideLhsWidth, 264px);
         min-width: 200px;
