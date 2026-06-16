@@ -29,6 +29,10 @@ type SendButtonProps = {
 const SendButton = ({disabled, handleSubmit, channelId}: SendButtonProps) => {
     const {formatMessage} = useIntl();
     const isScheduledPostEnabled = useSelector(isScheduledPostsEnabled);
+    const sendButtonText = formatMessage({
+        id: 'advanced_text_editor.send_button',
+        defaultMessage: '发送',
+    });
 
     const sendMessage = useCallback((e: React.FormEvent, schedulingInfo?: SchedulingInfo) => {
         e?.stopPropagation();
@@ -74,8 +78,9 @@ const SendButton = ({disabled, handleSubmit, channelId}: SendButtonProps) => {
                     disabled={disabled}
                     onClick={sendMessage}
                 >
+                    <span className='SendMessageButton__label'>{sendButtonText}</span>
                     <SendIcon
-                        size={18}
+                        size={16}
                         color='currentColor'
                     />
                 </button>

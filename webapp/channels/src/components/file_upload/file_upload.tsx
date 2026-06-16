@@ -80,6 +80,8 @@ export type TextEditorLocationType = 'post' | 'comment' | 'thread' | 'edit_post'
 
 export type Props = {
     channelId: string;
+    buttonClassName?: string;
+    buttonText?: string;
 
     /**
      * Current root post's ID
@@ -624,17 +626,21 @@ export class FileUpload extends PureComponent<Props, State> {
                             type='button'
                             id='fileUploadButton'
                             aria-label={buttonAriaLabel}
-                            className={classNames('style--none AdvancedTextEditor__action-button', {
+                            className={classNames('style--none AdvancedTextEditor__action-button', this.props.buttonClassName, {
                                 disabled: uploadsRemaining <= 0,
                             })}
                             onClick={this.simulateInputClick}
                             onTouchEnd={this.simulateInputClick}
                         >
-                            <PaperclipIcon
-                                size={18}
-                                color={'currentColor'}
-                                aria-label={iconAriaLabel}
-                            />
+                            {this.props.buttonText ? (
+                                <span>{this.props.buttonText}</span>
+                            ) : (
+                                <PaperclipIcon
+                                    size={18}
+                                    color={'currentColor'}
+                                    aria-label={iconAriaLabel}
+                                />
+                            )}
                         </button>
                     </WithTooltip>
                     <input
@@ -696,13 +702,17 @@ export class FileUpload extends PureComponent<Props, State> {
                                 type='button'
                                 id='fileUploadButton'
                                 aria-label={buttonAriaLabel}
-                                className='style--none AdvancedTextEditor__action-button'
+                                className={classNames('style--none AdvancedTextEditor__action-button', this.props.buttonClassName)}
                             >
-                                <PaperclipIcon
-                                    size={18}
-                                    color={'currentColor'}
-                                    aria-label={iconAriaLabel}
-                                />
+                                {this.props.buttonText ? (
+                                    <span>{this.props.buttonText}</span>
+                                ) : (
+                                    <PaperclipIcon
+                                        size={18}
+                                        color={'currentColor'}
+                                        aria-label={iconAriaLabel}
+                                    />
+                                )}
                             </button>
                         </WithTooltip>
                         <Menu

@@ -9,11 +9,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {ServerError} from '@mattermost/types/errors';
 import type {SchedulingInfo} from '@mattermost/types/schedule_post';
 
-import {savePreferences} from 'mattermost-redux/actions/preferences';
 import {Permissions} from 'mattermost-redux/constants';
 import {getChannel, makeGetChannel, getDirectChannel} from 'mattermost-redux/selectors/entities/channels';
 import {getConfig, getFeatureFlagValue} from 'mattermost-redux/selectors/entities/general';
-import {get, getBool, getInt} from 'mattermost-redux/selectors/entities/preferences';
+import {get, getInt} from 'mattermost-redux/selectors/entities/preferences';
 import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
 import {getCurrentUserId, isCurrentUserGuestUser, getStatusForUserId, makeGetDisplayName} from 'mattermost-redux/selectors/entities/users';
 
@@ -51,11 +50,11 @@ import Constants, {
     Locations,
     StoragePrefixes,
     Preferences,
-    AdvancedTextEditor as AdvancedTextEditorConst,
     UserStatuses,
     ModalIdentifiers,
     AdvancedTextEditorTextboxIds,
 } from 'utils/constants';
+import {focusAndInsertText} from 'utils/exec_commands';
 import {canUploadFiles as canUploadFilesAccordingToConfig} from 'utils/file_utils';
 import type {ApplyMarkdownOptions} from 'utils/markdown/apply_markdown';
 import {applyMarkdown as applyMarkdownUtil} from 'utils/markdown/apply_markdown';
@@ -72,12 +71,9 @@ import DoNotDisturbWarning from './do_not_disturb_warning';
 import EditPostFooter from './edit_post_footer';
 import Footer from './footer';
 import FormattingBar from './formatting_bar';
-import {FormattingBarSpacer, Separator} from './formatting_bar/formatting_bar';
+import {FormattingBarSpacer} from './formatting_bar/formatting_bar';
 import MessageWithMentionsFooter from './message_with_mentions_footer';
 import SendButton from './send_button';
-import ShowFormat from './show_formatting';
-import TexteditorActions from './texteditor_actions';
-import ToggleFormattingBar from './toggle_formatting_bar';
 import UnifiedLabelsWrapper from './unified_labels_wrapper';
 import useBurnOnRead from './use_burn_on_read';
 import useEditorEmojiPicker from './use_editor_emoji_picker';
@@ -130,6 +126,18 @@ const AdvancedTextEditor = ({
     storageKey,
 }: Props) => {
     const {formatMessage} = useIntl();
+    const emojiButtonText = formatMessage({
+        id: 'advanced_text_editor.emoji_button',
+        defaultMessage: '表情',
+    });
+    const mentionButtonText = formatMessage({
+        id: 'advanced_text_editor.mention_button',
+        defaultMessage: '@',
+    });
+    const mentionButtonAriaLabel = formatMessage({
+        id: 'advanced_text_editor.mention_button.aria_label',
+        defaultMessage: '插入提及',
+    });
 
     const dispatch = useDispatch();
 
@@ -152,17 +160,6 @@ const AdvancedTextEditor = ({
 
     const isRHS = isThreadView ? false : Boolean(rootId) || location === Locations.RHS_COMMENT;
 
-    const getFormattingBarPreferenceName = () => {
-        let name: string;
-        if (isRHS) {
-            name = isInEditMode ? AdvancedTextEditorConst.EDIT : AdvancedTextEditorConst.COMMENT;
-        } else {
-            name = AdvancedTextEditorConst.POST;
-        }
-
-        return name;
-    };
-
     const currentUserId = useSelector(getCurrentUserId);
     const channel = useSelector((state: GlobalState) => getChannelSelector(state, channelId));
     const channelDisplayName = channel?.display_name || '';
@@ -173,10 +170,6 @@ const AdvancedTextEditor = ({
     const maxPostSize = useSelector((state: GlobalState) => parseInt(getConfig(state).MaxPostSize || '', 10) || Constants.DEFAULT_CHARACTER_LIMIT);
     const canUploadFiles = useSelector((state: GlobalState) => canUploadFilesAccordingToConfig(getConfig(state)));
     const fullWidthTextBox = useSelector((state: GlobalState) => get(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.CHANNEL_DISPLAY_MODE, Preferences.CHANNEL_DISPLAY_MODE_DEFAULT) === Preferences.CHANNEL_DISPLAY_MODE_FULL_SCREEN);
-    const isFormattingBarHidden = useSelector((state: GlobalState) => {
-        const preferenceName = getFormattingBarPreferenceName();
-        return getBool(state, Preferences.ADVANCED_TEXT_EDITOR, preferenceName);
-    });
     const teammateId = useSelector((state: GlobalState) => getDirectChannel(state, channelId)?.teammate_id || '');
     const teammateDisplayName = useSelector((state: GlobalState) => (teammateId ? getDisplayName(state, teammateId) : ''));
     const showDndWarning = useSelector((state: GlobalState) => (teammateId ? getStatusForUserId(state, teammateId) === UserStatuses.DND : false));
@@ -229,12 +222,11 @@ const AdvancedTextEditor = ({
 
     const readOnlyChannel = !canPost;
     const hasDraftMessage = Boolean(draft.message);
-    const showFormattingBar = !isFormattingBarHidden && !readOnlyChannel;
+    const showFormattingBar = false;
     const enableSharedChannelsDMs = useSelector((state: GlobalState) => getFeatureFlagValue(state, 'EnableSharedChannelsDMs') === 'true');
     const isDMOrGMRemote = isChannelShared && (channelType === Constants.DM_CHANNEL || channelType === Constants.GM_CHANNEL);
 
     const handleShowPreview = useCallback(() => {
-        setShowPreview((prev) => !prev);
     }, []);
 
     const emitTypingEvent = useCallback(() => {
@@ -302,15 +294,7 @@ const AdvancedTextEditor = ({
     }, [showPreview, handleDraftChange, draft]);
 
     const toggleAdvanceTextEditor = useCallback(() => {
-        dispatch(savePreferences(currentUserId, [{
-            category: Preferences.ADVANCED_TEXT_EDITOR,
-            user_id: currentUserId,
-
-            // name: isRHS ? AdvancedTextEditorConst.COMMENT : AdvancedTextEditorConst.POST,
-            name: getFormattingBarPreferenceName(),
-            value: String(!isFormattingBarHidden),
-        }]));
-    }, [dispatch, currentUserId, getFormattingBarPreferenceName, isFormattingBarHidden]);
+    }, []);
 
     const pluginItems = usePluginItems(draft, textboxRef, handleDraftChange, channelId);
     const focusTextbox = useTextboxFocus(textboxRef, channelId, isRHS, canPost);
@@ -343,6 +327,8 @@ const AdvancedTextEditor = ({
         textboxId,
         isDisabled,
         showPreview,
+        'AdvancedTextEditor__utilityButton',
+        emojiButtonText,
     );
     const {
         labels: priorityLabels,
@@ -539,6 +525,19 @@ const AdvancedTextEditor = ({
         focusTextbox(true);
     }, [handleDraftChange, focusTextbox, draft, textboxRef]);
 
+    const handleInsertMention = useCallback(() => {
+        const textbox = textboxRef.current?.getInputBox();
+        if (!textbox) {
+            return;
+        }
+
+        const caretPosition = textbox.selectionStart ?? 0;
+        const previousCharacter = caretPosition > 0 ? textbox.value[caretPosition - 1] : '';
+        const mentionPrefix = caretPosition > 0 && previousCharacter && !(/\s/).test(previousCharacter) ? ' @' : '@';
+
+        focusAndInsertText(textbox, mentionPrefix);
+    }, [textboxRef]);
+
     // Handle width change when there is no message.
     useEffect(() => {
         if (!hasDraftMessage) {
@@ -621,13 +620,6 @@ const AdvancedTextEditor = ({
             disabled={disableSendButton}
             handleSubmit={handleSubmitPostAndScheduledMessage}
             channelId={channelId}
-        />
-    );
-
-    const showFormatJSX = disableSendButton ? null : (
-        <ShowFormat
-            onClick={handleShowPreview}
-            active={showPreview}
         />
     );
 
@@ -726,9 +718,9 @@ const AdvancedTextEditor = ({
         );
     }, [draft, getSelectedText, updateText, channelId, location, rewriteMenuProps, aiRewriteEnabled, hasAIActionsMenu]);
 
-    const formattingBar = (
+    const formattingBar = showFormattingBar ? (
         <AutoHeightSwitcher
-            showSlot={showFormattingBar ? 1 : 2}
+            showSlot={1}
             slot1={(
                 <FormattingBar
                     applyMarkdown={applyMarkdown}
@@ -743,7 +735,7 @@ const AdvancedTextEditor = ({
             slot2={null}
             shouldScrollIntoView={keepEditorInFocus}
         />
-    );
+    ) : null;
 
     const fileUploadOverlay = useMemo(() => {
         const overlayType = isRHS ? 'right' : 'center';
@@ -766,7 +758,7 @@ const AdvancedTextEditor = ({
         );
     }, [isInEditMode, isRHS]);
 
-    const showFormattingSpacer = isMessageLong || showPreview || attachmentPreview || isRHS || isThreadView;
+    const showFormattingSpacer = Boolean(formattingBar) && (isMessageLong || showPreview || attachmentPreview || isRHS || isThreadView);
 
     const containsAtMentionsInMessage = allAtMentions(draft?.message)?.length > 0;
 
@@ -857,34 +849,32 @@ const AdvancedTextEditor = ({
                             onWidthChange={handleWidthChange}
                         />
                         {attachmentPreview}
-                        {!isDisabled && (showFormattingBar || showPreview) && (
-                            <TexteditorActions
-                                placement='top'
-                                isScrollbarRendered={renderScrollbar}
-                            >
-                                {showFormatJSX}
-                            </TexteditorActions>
-                        )}
-                        {showFormattingSpacer ? (
+                        {formattingBar && (showFormattingSpacer ? (
                             <FormattingBarSpacer>
                                 {formattingBar}
                             </FormattingBarSpacer>
-                        ) : formattingBar}
+                        ) : formattingBar)}
                         {!isDisabled && (
-                            <TexteditorActions
-                                ref={editorActionsRef}
-                                placement='bottom'
-                            >
-                                <ToggleFormattingBar
-                                    onClick={toggleAdvanceTextEditor}
-                                    active={showFormattingBar}
-                                    disabled={showPreview}
-                                />
-                                <Separator/>
-                                {fileUploadJSX}
-                                {emojiPicker}
-                                {sendButton}
-                            </TexteditorActions>
+                            <div className='AdvancedTextEditor__bottomBar'>
+                                <div className='AdvancedTextEditor__utilityActions'>
+                                    {fileUploadJSX}
+                                    <button
+                                        type='button'
+                                        className='AdvancedTextEditor__utilityButton'
+                                        aria-label={mentionButtonAriaLabel}
+                                        onClick={handleInsertMention}
+                                    >
+                                        {mentionButtonText}
+                                    </button>
+                                    {emojiPicker}
+                                </div>
+                                <div
+                                    ref={editorActionsRef}
+                                    className='AdvancedTextEditor__sendActions'
+                                >
+                                    {sendButton}
+                                </div>
+                            </div>
                         )}
                     </div>
                     {showSendTutorialTip && (

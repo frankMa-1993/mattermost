@@ -184,6 +184,11 @@ const useUploadFiles = (
             ref={fileUploadRef}
             fileCount={getFileCount(draft)}
             getTarget={getFileUploadTarget}
+            buttonClassName='AdvancedTextEditor__utilityButton'
+            buttonText={intl.formatMessage({
+                id: 'advanced_text_editor.upload_button',
+                defaultMessage: '附件',
+            })}
             onFileUploadChange={handleFileUploadChange}
             onUploadStart={handleUploadStart}
             onFileUpload={handleFileUploadComplete}

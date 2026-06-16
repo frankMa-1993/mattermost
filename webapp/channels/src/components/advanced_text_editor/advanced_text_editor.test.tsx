@@ -219,6 +219,56 @@ describe('components/avanced_text_editor/advanced_text_editor', () => {
             expect(mockedUpdateDraft).not.toHaveBeenCalled();
         });
 
+        it('keeps upload, emoji and send actions while hiding formatting controls', async () => {
+            renderWithContext(
+                <AdvancedTextEditor
+                    {...baseProps}
+                />,
+                mergeObjects(initialState, {
+                    entities: {
+                        general: {
+                            config: {
+                                EnableEmojiPicker: 'true',
+                                EnableFileAttachments: 'true',
+                            },
+                        },
+                    },
+                }),
+            );
+
+            await userEvent.type(screen.getByTestId('post_textbox'), 'hello');
+
+            expect(screen.queryByRole('button', {name: 'formatting'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: 'preview'})).not.toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'attachment'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: '插入提及'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'select an emoji'})).toBeInTheDocument();
+            expect(screen.getByTestId('SendMessageButton')).toBeInTheDocument();
+        });
+
+        it('inserts a mention trigger when the mention button is clicked', async () => {
+            renderWithContext(
+                <AdvancedTextEditor
+                    {...baseProps}
+                />,
+                mergeObjects(initialState, {
+                    entities: {
+                        general: {
+                            config: {
+                                EnableEmojiPicker: 'true',
+                                EnableFileAttachments: 'true',
+                            },
+                        },
+                    },
+                }),
+            );
+
+            const textbox = screen.getByTestId('post_textbox');
+            await userEvent.click(screen.getByRole('button', {name: '插入提及'}));
+
+            expect(textbox).toHaveValue('@');
+        });
+
         it('ESC should blur the input and reset draft when in editing mode', async () => {
             jest.useFakeTimers();
             const props = {

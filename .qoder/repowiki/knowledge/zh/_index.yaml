@@ -2,7 +2,7 @@
 schema_version: 1
 locale: zh-CN
 branch: release
-exported_at: "2026-06-15T03:34:15Z"
+exported_at: "2026-06-15T09:38:02Z"
 modules:
     "":
         dir_name: Mattermost 协作平台全栈工程体系
@@ -52,8 +52,8 @@ modules:
         depends_on: []
         related_to: []
     webapp:
-        dir_name: Mattermost Web 客户端应用
-        title: Mattermost Web 客户端应用
+        dir_name: Mattermost Web 应用前端
+        title: Mattermost Web 应用前端
         scope:
             - webapp/
         source_files: []

@@ -29,6 +29,8 @@ const useEditorEmojiPicker = (
     textboxId: string,
     isDisabled: boolean,
     shouldShowPreview: boolean,
+    buttonClassName?: string,
+    buttonText?: string,
 ) => {
     const intl = useIntl();
 
@@ -120,13 +122,17 @@ const useEditorEmojiPicker = (
                         type='button'
                         aria-label={intl.formatMessage({id: 'emoji_picker.emojiPicker.button.ariaLabel', defaultMessage: 'select an emoji'})}
                         disabled={shouldShowPreview}
-                        className={classNames({active: showEmojiPicker})}
+                        className={classNames(buttonClassName, {active: showEmojiPicker})}
                         {...getReferenceProps()}
                     >
-                        <EmoticonHappyOutlineIcon
-                            color={'currentColor'}
-                            size={18}
-                        />
+                        {buttonText ? (
+                            <span>{buttonText}</span>
+                        ) : (
+                            <EmoticonHappyOutlineIcon
+                                color={'currentColor'}
+                                size={18}
+                            />
+                        )}
                     </IconContainer>
                 </WithTooltip>
                 {emojiPicker}
